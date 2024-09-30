@@ -1,12 +1,34 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../lib/firebase'; // Firebase 설정 임포트
+import useUsernameStore from '../store';
+
+
 export default function Login_Head() {
+    const { updateUsername } = useUsernameStore();
     const navigateTo = useNavigate();
     const [isEmailLogin, setIsEmailLogin] = useState(true);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [phone, setPhone] = useState('');
+    // 이메일/비밀번호 로그인 처리 함수
+    const handleEmailLogin = async () => {
+        try {
+            // Firebase Authentication 로그인 시도
+            await auth.signInWithEmailAndPassword(email, password);
+            alert('로그인 성공');
+            updateUsername(email);
+            navigateTo('/'); // 로그인 성공 후 대시보드로 이동
+        } catch (error) {
+            console.error('로그인 오류:', error.message);
+            alert('로그인 실패: ' + error.message);
+        }
+    };
 
+    // 로그인 방법 토글
     const toggleLoginMethod = (useEmail) => {
         setIsEmailLogin(useEmail);
-    }
+    };
 
     return (
         <div>
@@ -21,12 +43,23 @@ export default function Login_Head() {
                     휴대폰번호 로그인
                 </button>
             </div>
+
             {isEmailLogin ? (
                 <div>
                     <h3>이메일 로그인</h3>
-                    <input type="email" placeholder="이메일 입력" />
-                    <input type="password" placeholder="비밀번호 입력" />
-                    <button>로그인</button>
+                    <input
+                        type="email"
+                        placeholder="이메일 입력"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                        type="password"
+                        placeholder="비밀번호 입력"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button onClick={handleEmailLogin}>로그인</button>
                     <div>
                         <a href="#">아이디·비밀번호 찾기</a>
                     </div>
@@ -34,13 +67,19 @@ export default function Login_Head() {
             ) : (
                 <div>
                     <h3>휴대폰번호 로그인</h3>
-                    <input type="tel" placeholder="휴대폰번호 입력" />
+                    <input
+                        type="tel"
+                        placeholder="휴대폰번호 입력"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                    />
                     <button>인증번호 발송</button>
                 </div>
             )}
+
             <br />
             <div>
-            <button onClick={() => navigateTo('/sign_in')}>회원가입</button>
+                <button onClick={() => navigateTo('/sign_in')}>회원가입</button>
             </div>
         </div>
     );
