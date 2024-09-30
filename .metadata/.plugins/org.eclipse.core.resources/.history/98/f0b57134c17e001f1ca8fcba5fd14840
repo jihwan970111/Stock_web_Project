@@ -1,0 +1,2 @@
+# spring이 실행될 aplplication 이름 Stock_Project
+spring.application.name=Stock_Project

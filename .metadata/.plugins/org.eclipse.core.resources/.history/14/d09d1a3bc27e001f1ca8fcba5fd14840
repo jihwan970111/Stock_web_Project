@@ -1,0 +1,5 @@
+package kr.ac.kopo.ctc.stock.config;
+
+public class QueryDslConfig {
+
+}

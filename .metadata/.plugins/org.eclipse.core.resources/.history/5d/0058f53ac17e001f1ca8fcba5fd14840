@@ -1,0 +1,10 @@
+# spring이 실행될 aplplication 이름 Stock_Project
+spring.application.name=Stock_Project
+#스프링 부트 한글 입출력 설정하기
+server.servlet.encoding.force=true
+
+# ===============================
+# = MVC
+# ===============================
+#spring의 mvc 화면은 /WEB-INF/views 밑에 있는 녀석들을 참조할건데
+spring.mvc.view.prefix=/WEB-INF/views/
