@@ -6,6 +6,8 @@ const MyRouter = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main />} />
+          <Route path="gongji" element={<Main />} />
+          <Route path="gesipan" element={<Main />} />
         </Routes>
       </BrowserRouter>
     );
