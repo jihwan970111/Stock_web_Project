@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { auth, db, firebase } from "../lib/firebase"; // Firebase 설정을 가져옵니다.
+import { auth, db, firebase } from "../lib/firebase"; // Firebase 설정을 가져온다.
+import { useNavigate, useLocation } from 'react-router-dom';
+
 
 export default function Sign() {
   const [form, setForm] = useState({
@@ -13,6 +15,9 @@ export default function Sign() {
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
+
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -73,7 +78,8 @@ export default function Sign() {
   
         setSuccessMessage('회원가입에 성공했습니다.');
         console.log('회원가입에 성공했습니다:', form);
-  
+        alert('회원가입에 성공했습니다');
+        navigate('/', { state: pathname });
       } catch (error) {
         console.error('회원가입 중 오류 발생:', error);
         setErrors({ form: error.message });
