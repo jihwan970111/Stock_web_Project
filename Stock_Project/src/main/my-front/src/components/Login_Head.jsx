@@ -11,6 +11,8 @@ export default function Login_Head() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [verificationId, setVerificationId] = useState('');
     // 이메일/비밀번호 로그인 처리 함수
     const handleEmailLogin = async () => {
         try {
@@ -21,6 +23,33 @@ export default function Login_Head() {
             navigateTo('/'); // 로그인 성공 후 대시보드로 이동
         } catch (error) {
             console.error('로그인 오류:', error.message);
+            alert('로그인 실패: ' + error.message);
+        }
+    };
+
+    // 휴대폰 번호 인증 코드 요청
+    const sendVerificationCode = async () => {
+        try {
+            const recaptchaVerifier = new auth.RecaptchaVerifier('recaptcha-container');
+            const phoneProvider = new auth.PhoneAuthProvider();
+            const verificationId = await phoneProvider.verifyPhoneNumber(phone, recaptchaVerifier);
+            setVerificationId(verificationId);
+            alert('인증번호가 발송되었습니다.');
+        } catch (error) {
+            console.error('인증번호 발송 오류:', error.message);
+            alert('인증번호 발송 실패: ' + error.message);
+        }
+    };
+
+    // 인증 코드로 로그인 처리
+    const handlePhoneLogin = async () => {
+        try {
+            const credential = auth.PhoneAuthProvider.credential(verificationId, verificationCode);
+            await auth.signInWithCredential(credential);
+            alert('휴대폰 로그인 성공');
+            navigateTo('/dashboard');
+        } catch (error) {
+            console.error('휴대폰 로그인 오류:', error.message);
             alert('로그인 실패: ' + error.message);
         }
     };
@@ -73,7 +102,17 @@ export default function Login_Head() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                     />
-                    <button>인증번호 발송</button>
+                    <button onClick={sendVerificationCode}>인증번호 발송</button>
+
+                    <input
+                        type="text"
+                        placeholder="인증번호 입력"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                    />
+                    <button onClick={handlePhoneLogin}>로그인</button>
+
+                    <div id="recaptcha-container"></div>
                 </div>
             )}
 
