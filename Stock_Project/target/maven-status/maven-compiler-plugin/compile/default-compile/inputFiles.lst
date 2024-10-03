@@ -1,4 +1,6 @@
 /Users/parkjihwan/Documents/development/2024년 포트폴리오/Stock_web_Project/Stock_Project/src/main/java/kr/ac/kopo/ctc/stock/StockProjectApplication.java
 /Users/parkjihwan/Documents/development/2024년 포트폴리오/Stock_web_Project/Stock_Project/src/main/java/kr/ac/kopo/ctc/stock/config/QueryDslConfig.java
 /Users/parkjihwan/Documents/development/2024년 포트폴리오/Stock_web_Project/Stock_Project/src/main/java/kr/ac/kopo/ctc/stock/config/WebConfig.java
+/Users/parkjihwan/Documents/development/2024년 포트폴리오/Stock_web_Project/Stock_Project/src/main/java/kr/ac/kopo/ctc/stock/domain/Kor_Gdp.java
+/Users/parkjihwan/Documents/development/2024년 포트폴리오/Stock_web_Project/Stock_Project/src/main/java/kr/ac/kopo/ctc/stock/repository/Kor_Gdp_Repository.java
 /Users/parkjihwan/Documents/development/2024년 포트폴리오/Stock_web_Project/Stock_Project/src/main/java/kr/ac/kopo/ctc/stock/web/MainController.java
