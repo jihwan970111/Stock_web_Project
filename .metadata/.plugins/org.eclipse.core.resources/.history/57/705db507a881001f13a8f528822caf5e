@@ -1,0 +1,5 @@
+package kr.ac.kopo.ctc.stock.repository;
+
+public interface Kor_global_exchange_rate {
+
+}
