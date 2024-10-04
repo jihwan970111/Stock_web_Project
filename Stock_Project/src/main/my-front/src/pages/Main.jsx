@@ -53,14 +53,14 @@ function Main() {
             }
         })
         .then(response => {
-            console.log(response.data);
-            const newsData = JSON.parse(response.data);  // JSON 문자열을 파싱
+            console.log(response.data);  // 서버에서 반환된 데이터를 콘솔에 출력
+            const newsData = response.data;  // 이미 객체로 파싱된 데이터로 사용
             setLoading(false);  // 뉴스 로딩 완료
             setNewsData(newsData);  // 서버에서 반환된 뉴스 데이터 업데이트
         })
         .catch(error => {
             setLoading(false);  // 로딩 종료
-            console.error('Error collecting news: ', error);
+            console.error('Error collecting news: ', error);  // 에러 메시지 출력
         });
     };
 
