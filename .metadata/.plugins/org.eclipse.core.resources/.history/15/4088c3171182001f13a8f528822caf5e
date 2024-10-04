@@ -1,0 +1,110 @@
+package kr.ac.kopo.ctc.stock.service;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import kr.ac.kopo.ctc.stock.dto.News;
+import java.util.ArrayList;
+import java.util.List;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+public class News_Crawl {
+	public List<News> googleCrawl(String stockName) {
+	    List<News> newsList = new ArrayList<>();
+
+	    try {
+	        String url = "https://www.google.com/search?q=" + stockName + "&tbm=nws";
+	        Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get();
+	        Elements newsItems = doc.select(".SoaBEf");  // 뉴스 아이템을 감싸는 요소로 선택자 변경
+
+	        for (Element item : newsItems) {
+	            try {
+	                String title = item.select(".mCBkyc").text();  // 뉴스 제목 선택자
+	                String link = item.select("a").attr("href");
+	                String time = item.select(".WG9SHc span").text();  // 뉴스 시간 선택자
+	                System.out.println("Google " + title);
+
+	                News news = new News(title, link, time, "Google");
+	                newsList.add(news);
+	            } catch (Exception e) {
+	                System.out.println("Error parsing Google news item: " + e.getMessage());
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return newsList;
+	}
+
+	
+	public List<News> naverCrawl(String stockName) {
+        List<News> newsList = new ArrayList<>();
+
+        // 크롬 드라이버 경로 설정 (드라이버 설치 경로 필요)
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        WebDriver driver = new ChromeDriver();
+
+        try {
+            // Naver 뉴스 페이지로 이동
+            String url = "https://search.naver.com/search.naver?where=news&query=" + stockName + "&sort=0";
+            driver.get(url);
+
+            // 뉴스 제목 및 시간 정보 가져오기
+            List<WebElement> newsTitles = driver.findElements(By.cssSelector(".news_tit"));
+            List<WebElement> timeElements = driver.findElements(By.cssSelector(".info_group .info"));
+
+            for (int i = 0; i < newsTitles.size(); i++) {
+                String title = newsTitles.get(i).getAttribute("title");
+                String link = newsTitles.get(i).getAttribute("href");
+                String time = (i < timeElements.size()) ? timeElements.get(i).getText() : "시간 정보 없음";
+
+                System.out.println("Naver: " + title + " / Time: " + time);
+
+                News news = new News(title, link, time, "Naver");
+                newsList.add(news);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // 브라우저 닫기
+            driver.quit();
+        }
+
+        return newsList;
+    }
+	
+	
+	
+	public List<News> daumCrawl(String stockName) {
+	    List<News> newsList = new ArrayList<>();
+
+	    try {
+	        String url = "https://search.daum.net/search?w=news&q=" + stockName + "&sort=0";
+	        Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get();
+	        Elements newsItems = doc.select(".tit-g");  // 뉴스 제목을 감싸는 요소로 선택자 변경
+
+	        for (Element item : newsItems) {
+	            try {
+	                String title = item.text();  // 뉴스 제목
+	                String link = item.select("a").attr("href");
+	                String time = item.parent().select(".f_nb.date").text();  // 뉴스 시간 선택자
+	                System.out.println("Daum " + title);
+
+	                News news = new News(title, link, time, "Daum");
+	                newsList.add(news);
+	            } catch (Exception e) {
+	                System.out.println("Error parsing Daum news item: " + e.getMessage());
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return newsList;
+	}
+
+
+}

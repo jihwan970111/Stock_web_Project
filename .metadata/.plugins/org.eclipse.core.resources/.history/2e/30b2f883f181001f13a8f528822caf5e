@@ -1,0 +1,18 @@
+package kr.ac.kopo.ctc.stock.dto;
+import java.time.LocalDateTime;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class Message {
+	private LocalDateTime createdAt;  // 타임스탬프
+    private String displayName;       // 사용자 이름
+    private boolean isRead;           // 읽음 여부
+    private String photoURL;          // 프로필 사진 URL
+    private String text;              // 메시지 내용
+    private String uid;               // 사용자 ID
+    
+    public Message() {}
+}

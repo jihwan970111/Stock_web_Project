@@ -1,0 +1,24 @@
+package kr.ac.kopo.ctc.stock.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+@Service
+public class StockService {
+	@Autowired
+    private Kor_Gdp_Repository kor_Gdp_Repository;
+    
+    @Autowired
+    private Kor_global_exchange_rate_Repository kor_global_exchange_Repository;
+    
+    @Autowired
+    private Kor_Price_Repository kor_Price_Repository;
+
+    public List<Kor_global_exchange_rate> getAllGlobalExchangeRates() {
+        return kor_global_exchange_Repository.findAll();
+    }
+    
+    public List<Object[]> getPriceIncreaseRates(String date) {
+        return kor_Price_Repository.findPriceIncreaseRateByDate(date);
+    }
+}

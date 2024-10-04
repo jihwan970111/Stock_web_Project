@@ -1,0 +1,34 @@
+package kr.ac.kopo.ctc.stock.web;
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.ArrayList;
+import kr.ac.kopo.ctc.stock.dto.News;
+import kr.ac.kopo.ctc.stock.service.News_Crawl;
+
+import java.util.List;
+@RestController
+@RequestMapping("/api/news")
+public class NewsController {
+	@PostMapping("/getNews")
+    public ResponseEntity<String> getNews(@RequestParam String stockName) {
+        try {
+            // Python 스크립트를 실행시켜 뉴스 데이터 수집 및 h5 파일 저장
+            ProcessBuilder processBuilder = new ProcessBuilder("python3", "/Users/parkjihwan/Documents/development/Jihwan/Python/개인프로젝트파일/news.py", stockName);
+            Process process = processBuilder.start();
+            process.waitFor();
+
+            return ResponseEntity.ok("News data has been successfully collected and saved.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while collecting news data.");
+        }
+    }
+
+}

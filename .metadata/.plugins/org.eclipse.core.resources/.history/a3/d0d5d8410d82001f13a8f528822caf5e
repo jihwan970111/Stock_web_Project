@@ -1,0 +1,90 @@
+package kr.ac.kopo.ctc.stock.service;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import kr.ac.kopo.ctc.stock.dto.News;
+import java.util.ArrayList;
+import java.util.List;
+public class News_Crawl {
+	public List<News> googleCrawl(String stockName) {
+	    List<News> newsList = new ArrayList<>();
+
+	    try {
+	        String url = "https://www.google.com/search?q=" + stockName + "&tbm=nws";
+	        Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get();
+	        Elements newsItems = doc.select(".dbsr");
+
+	        for (Element item : newsItems) {
+	            try {
+	                String title = item.select(".nDgy9d").text();
+	                String link = item.select("a").attr("href");
+	                String time = item.select(".WG9SHc span").text();
+	                System.out.println("Google " + time);
+
+	                // 시간 형식 변환 예시
+	                // time = convertTimeFormat(time);
+
+	                News news = new News(title, link, time, "Google");
+	                newsList.add(news);
+	            } catch (Exception e) {
+	                System.out.println("Error parsing Google news item: " + e.getMessage());
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return newsList;
+	}
+	
+	public List<News> naverCrawl(String stockName) {
+	    List<News> newsList = new ArrayList<>();
+	    
+	    try {
+	        String url = "https://search.naver.com/search.naver?where=news&query=" + stockName + "&sort=0";
+	        Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get();
+	        Elements newsItems = doc.select(".news_tit");
+
+	        for (Element item : newsItems) {
+	            String title = item.attr("title");
+	            String link = item.attr("href");
+	            String time = item.select(".info_group").text();
+//	            System.out.println("Naver " + time);
+	            News news = new News(title, link, time, "Naver");
+	            newsList.add(news);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return newsList;
+	}
+	
+	
+	
+	public List<News> daumCrawl(String stockName) {
+	    List<News> newsList = new ArrayList<>();
+	    
+	    try {
+	        String url = "https://search.daum.net/search?w=news&q=" + stockName + "&sort=0";
+	        Document doc = Jsoup.connect(url).userAgent("Mozilla/5.0").get();
+	        Elements newsItems = doc.select(".wrap_cont");
+
+	        for (Element item : newsItems) {
+	            String title = item.select(".tit_main").text();
+	            String link = item.select("a").attr("href");
+	            String time = item.select(".info").text();  // 시간에 해당하는 새로운 선택자
+	            System.out.println("Daum " + time);
+	            News news = new News(title, link, time, "Daum");
+	            newsList.add(news);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return newsList;
+	}
+
+}

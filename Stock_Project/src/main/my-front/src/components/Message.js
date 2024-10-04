@@ -13,7 +13,7 @@ const Message = ({
 }) => {
   const { username, email } = useUsernameStore();
 
-  const currentUser = { id: email}; // 로그인된 사용자 정보를 대신함
+  const currentUser = { id: email }; // 로그인된 사용자 정보를 대신함
 
   if (!text) return null;
   
@@ -40,7 +40,7 @@ const Message = ({
         }`}
       >
         <strong>{displayName}</strong>
-        <br/>
+        <br />
         {text}
       </div>
       <div className="text-gray-400 text-xs mx-2 flex flex-col">

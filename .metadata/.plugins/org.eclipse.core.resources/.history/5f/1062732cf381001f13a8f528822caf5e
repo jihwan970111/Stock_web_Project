@@ -1,0 +1,59 @@
+package kr.ac.kopo.ctc.stock.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.google.firebase.cloud.FirestoreClient;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.WriteResult;
+import kr.ac.kopo.ctc.stock.dto.Message;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+@Service
+public class MessageService {
+	
+
+    // Firestore에 메시지 저장
+    public void saveMessage(String text, String uid, String displayName, String photoURL) {
+        Firestore db = FirestoreClient.getFirestore();
+
+        Message message = new Message();
+        message.setText(text);
+        message.setUid(uid);
+        message.setDisplayName(displayName);
+        message.setPhotoURL(photoURL);
+        message.setCreatedAt(java.time.LocalDateTime.now());
+        message.setIsRead(false); // 초기 상태는 읽지 않음으로 설정
+
+        // 비동기적으로 Firestore에 메시지 저장 (동기적으로 처리)
+        DocumentReference docRef = db.collection("messages").document();  // 새 문서 생성
+        try {
+            WriteResult result = docRef.set(message).get();  // 비동기 작업을 동기적으로 대기
+            System.out.println("메시지 저장 성공: " + result.getUpdateTime());
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("메시지 저장 실패: " + e.getMessage());
+        }
+    }
+
+    // Firestore에서 메시지 목록 가져오기
+    public List<Message> getMessages() {
+        Firestore db = FirestoreClient.getFirestore();
+        List<Message> messages = new ArrayList<>();
+
+        try {
+            // Firestore에서 메시지를 가져오는 작업을 동기적으로 처리
+            QuerySnapshot snapshot = db.collection("messages").get().get();  // 비동기 작업을 동기적으로 대기
+            snapshot.forEach(document -> {
+                messages.add(document.toObject(Message.class));
+            });
+        } catch (InterruptedException | ExecutionException e) {
+            System.err.println("메시지 목록 조회 실패: " + e.getMessage());
+        }
+
+        return messages;
+    }
+}

@@ -92,6 +92,32 @@
 			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- Firebase Admin SDK 의존성 추가 -->
+		<dependency>
+		    <groupId>com.google.firebase</groupId>
+		    <artifactId>firebase-admin</artifactId>
+		    <version>8.0.0</version>
+		</dependency>
+		
+		<!-- 크롤링을 위한 jsoup 의존성 추가 -->
+		<dependency>
+    		<groupId>org.jsoup</groupId>
+    		<artifactId>jsoup</artifactId>
+    		<version>1.16.1</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>io.grpc</groupId>
+		  <artifactId>grpc-alts</artifactId>
+		  <version>1.38.0</version>
+		</dependency>
+		
+		<!---->
+		<dependency>
+		    <groupId>org.seleniumhq.selenium</groupId>
+		    <artifactId>selenium-java</artifactId>
+		    <version>4.11.0</version>
+		</dependency>
 		
 		
 		<dependency>

@@ -1,0 +1,42 @@
+package kr.ac.kopo.ctc.stock.web;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.ArrayList;
+import kr.ac.kopo.ctc.stock.dto.News;
+import kr.ac.kopo.ctc.stock.service.News_Crawl;
+
+import java.util.List;
+@RestController
+@RequestMapping("/api")
+public class NewsController {
+    private final News_Crawl newsCrawl;
+
+    public NewsController() {
+        this.newsCrawl = new News_Crawl();
+    }
+
+    @GetMapping("/news/{stockName}")
+    public ResponseEntity<?> getNews(@PathVariable String stockName) {
+        // 구글, 네이버, 다음 크롤링 로직 실행
+        List<News> googleNews = newsCrawl.googleCrawl(stockName);
+        List<News> naverNews = newsCrawl.naverCrawl(stockName);
+        List<News> daumNews = newsCrawl.daumCrawl(stockName);
+        // 크롤링한 결과 합치기
+        List<News> allNews = new ArrayList<>();
+        allNews.addAll(googleNews);
+        allNews.addAll(naverNews);
+        allNews.addAll(daumNews);
+
+        return ResponseEntity.ok(allNews);
+    }
+
+}

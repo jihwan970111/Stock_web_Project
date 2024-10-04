@@ -1,0 +1,51 @@
+package kr.ac.kopo.ctc.stock.service;
+
+import org.springframework.stereotype.Service;
+import com.google.firebase.cloud.FirestoreClient;
+import com.google.cloud.firestore.Firestore;
+import kr.ac.kopo.ctc.stock.dto.Message;
+
+import java.util.List;
+import java.util.ArrayList;
+
+@Service
+public class MessageService {
+
+    // Firestore에 저장
+    public void saveMessage(String text, String uid, String displayName, String photoURL) {
+        Firestore db = FirestoreClient.getFirestore();
+
+        Message message = new Message();
+        message.setText(text);
+        message.setUid(uid);
+        message.setDisplayName(displayName);
+        message.setPhotoURL(photoURL);
+        message.setCreatedAt(java.time.LocalDateTime.now());
+        message.setIsRead(false);
+
+        db.collection("messages").add(message).addOnSuccessListener(documentReference -> {
+            System.out.println("메시지 저장 성공: " + documentReference.getId());
+        }).addOnFailureListener(e -> {
+            System.err.println("메시지 저장 실패: " + e.getMessage());
+        });
+    }
+
+    // Firestore에서 메시지 목록 가져오기
+    public List<Message> getMessages() {
+        Firestore db = FirestoreClient.getFirestore();
+        List<Message> messages = new ArrayList<>();
+
+        // Firestore에서 메시지를 가져오는 로직 (예시)
+        db.collection("messages").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                task.getResult().forEach(document -> {
+                    messages.add(document.toObject(Message.class));
+                });
+            } else {
+                System.out.println("메시지 목록 조회 실패: " + task.getException());
+            }
+        });
+
+        return messages;
+    }
+}

@@ -1,82 +1,66 @@
 import React, { useState, useRef, useEffect } from "react";
-import { db, firebase } from "../lib/firebase"; // Firebase 설정 경로
-import { useFirestoreQuery } from "../lib/hooks"; // Firestore 훅 경로 확인
-import { BiSend } from "react-icons/bi"; // BiSend 아이콘 임포트
+import axios from "axios";
+import { BiSend } from "react-icons/bi";
 import Message from "./Message"; // Message 컴포넌트 임포트
 import useUsernameStore from '../store'; // zustand에서 사용자 정보 가져오기
 
 const Channel = ({ id = null }) => {
-  const messagesRef = db.collection('messages');
-  const messages = useFirestoreQuery(
-    messagesRef.orderBy("createdAt", "desc").limit(1000)
-  );
-
   const { username, email } = useUsernameStore(); // zustand에서 username과 email 가져오기
-
-  useEffect(() => {
-    console.log("Submitting message with username:", username); // 값 확인
-    console.log("Submitting message with email:", email);       // 값 확인
-  }, [username, email]);
-
   const [newMessage, setNewMessage] = useState("");
+  const [messages, setMessages] = useState([]);
   const inputRef = useRef();
   const bottomListRef = useRef();
 
-  const handleOnChange = (e) => {
-    setNewMessage(e.target.value);
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/messages');
+      setMessages(response.data);  // 메시지 상태 업데이트
+    } catch (error) {
+      console.error('메시지 조회 오류: ', error);
+    }
   };
+
+  useEffect(() => {
+    fetchMessages();  // 컴포넌트 마운트 시 메시지 조회
+  }, []);
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     const trimmedMessage = newMessage.trim();
-    if (!email || !username ) {
-      console.error('로그인 정보가 없습니다.');
+    
+    // 이메일이 'unknown'이거나 빈 값일 경우 처리
+    if (!email || email === 'unknown' || !username) {
       alert('로그인 후 다시 시도해 주세요.');
       return;
     }
 
     if (trimmedMessage) {
-      await messagesRef.add({
-        text: trimmedMessage,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        uid: email, // 이메일을 uid로 저장
-        displayName: username, // 실제 사용자 이름 저장
-        photoURL: "https://w7.pngwing.com/pngs/741/68/png-transparent-user-computer-icons-user-miscellaneous-cdr-rectangle-thumbnail.png", // 실제 사용자 프로필 사진
-        isRead: false,
-      });
-
-      setNewMessage("");
-      bottomListRef.current.scrollIntoView({ behavior: "smooth" });
+      try {
+        await axios.post('http://localhost:8080/api/messages/send', {
+          text: trimmedMessage,
+          uid: email,
+          displayName: username,
+          photoURL: "https://w7.pngwing.com/pngs/741/68/png-transparent-user-computer-icons-user-miscellaneous-cdr-rectangle-thumbnail.png"
+        });
+        setNewMessage("");  // 메시지 입력창 초기화
+        fetchMessages();  // 메시지 다시 불러오기
+        bottomListRef.current.scrollIntoView({ behavior: "smooth" });
+      } catch (error) {
+        console.error("메시지 전송 오류: ", error);
+      }
     }
   };
-
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [inputRef]);
-
-  useEffect(() => {
-    if (bottomListRef.current) {
-      bottomListRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
 
   return (
     <div className="flex flex-col h-full">
       <div className="overflow-auto h-full">
         <div className="py-4 max-w-screen-lg mx-auto">
           <ul>
-            {messages
-              ?.sort((first, second) =>
-                first?.createdAt?.seconds <= second?.createdAt?.seconds ? -1 : 1
-              )
-              ?.map((message) => (
-                <li key={message.id}>
-                  <Message {...message} />
-                </li>
-              ))}
+            {messages?.map((message) => (
+              <li key={message.id}>
+                <Message {...message} />
+              </li>
+            ))}
           </ul>
           <div ref={bottomListRef} className="mb-16" />
         </div>
@@ -88,7 +72,7 @@ const Channel = ({ id = null }) => {
             ref={inputRef}
             type="text"
             value={newMessage}
-            onChange={handleOnChange}
+            onChange={(e) => setNewMessage(e.target.value)}
             placeholder="메세지를 입력하세요"
             className="border rounded-full px-4 h-10 flex-1 mr-1 ml-1"
           />

@@ -11,46 +11,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import kr.ac.kopo.ctc.stock.domain.Kor_Gdp;
 import kr.ac.kopo.ctc.stock.domain.Kor_Price;
 import kr.ac.kopo.ctc.stock.domain.Kor_global_exchange_rate;
-import kr.ac.kopo.ctc.stock.repository.Kor_Gdp_Repository;
-import kr.ac.kopo.ctc.stock.repository.Kor_global_exchange_rate_Repository;
-import kr.ac.kopo.ctc.stock.repository.Kor_Price_Repository;
+import kr.ac.kopo.ctc.stock.service.StockService;
 
 @Controller
 public class MainController {
-    @Autowired
-    private Kor_Gdp_Repository kor_Gdp_Repository;
-    @Autowired
-    private Kor_global_exchange_rate_Repository kor_global_exchange_Repository;
-    @Autowired
-    private Kor_Price_Repository kor_Price_Repository;
-    
+	@Autowired
+    private StockService stockService;
     
     @GetMapping("/gdp")
     public ResponseEntity<List<Kor_global_exchange_rate>> getGdpData() {
-        List<Kor_Gdp> kor_gdp = kor_Gdp_Repository.findAll();
-        List<Kor_global_exchange_rate> kor_global = kor_global_exchange_Repository.findAll();
-        // 데이터 출력하여 확인
-//        System.out.println("Kor_Gdp 데이터:");
-//        for (Kor_global_exchange_rate data : kor_global) {
-//            System.out.println(data);
-//        }
-        
+        List<Kor_global_exchange_rate> kor_global = stockService.getAllGlobalExchangeRates();
         return ResponseEntity.ok(kor_global);
     }
-    
+
     @GetMapping("/priceIncreaseRate")
-    public ResponseEntity<List<Object[]>> getPriceIncreaseRate(
-            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") String date) {
-        
-        // 가격 상승률 계산 쿼리 실행
-        List<Object[]> priceIncreaseRates = kor_Price_Repository.findPriceIncreaseRateByDate(date);
-        
-        // 데이터 확인 출력
-        for (Object[] rate : priceIncreaseRates) {
-            System.out.println("종목코드: " + rate[0] + ", 종목명: " + rate[1] + ", 날짜: " + rate[2] + ", 종가: " + rate[3]
-            		+ ", 상승률: " + rate[4]);
-        }
-        
+    public ResponseEntity<List<Object[]>> getPriceIncreaseRateByLatestDate() {
+        // 서비스에서 가장 최근 날짜의 상승률 데이터를 가져옴
+        List<Object[]> priceIncreaseRates = stockService.getPriceIncreaseRatesByLatestDate();
         return ResponseEntity.ok(priceIncreaseRates);
     }
+    
 }

@@ -1,0 +1,19 @@
+package kr.ac.kopo.ctc.stock.service;
+
+import org.springframework.stereotype.Service;
+import java.util.List;
+@Service
+public class MessageService {
+
+    // Firestore 또는 DB 저장 로직을 여기에 구현
+    public void saveMessage(String text, String uid, String displayName, String photoURL) {
+        // Firestore나 DB에 저장 로직 추가
+        System.out.println("메시지 저장: " + text);
+    }
+
+    // 메시지 목록 가져오기 (선택 사항)
+    public List<Message> getMessages() {
+        // Firestore나 DB에서 메시지 목록을 가져오는 로직 추가
+        return new ArrayList<>();
+    }
+}
