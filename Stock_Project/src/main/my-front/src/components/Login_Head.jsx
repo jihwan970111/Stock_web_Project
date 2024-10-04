@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../lib/firebase'; // Firebase 설정 임포트
 import useUsernameStore from '../store';
+import { db } from '../lib/firebase'; // db 임포트
 
 
 export default function Login_Head() {
@@ -18,9 +19,20 @@ export default function Login_Head() {
         try {
             // Firebase Authentication 로그인 시도
             await auth.signInWithEmailAndPassword(email, password);
-            alert('로그인 성공');
-            updateUsername(email);
-            navigateTo('/'); // 로그인 성공 후 대시보드로 이동
+            const user = auth.currentUser;
+            if (user) {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userName = userDoc.data().name || 'Unknown User'; // Firestore에서 name 필드 가져오기
+                    const userEmail = user.email;
+                    // Firestore에서 사용자 정보 가져오기                
+                    updateUsername(userName, userEmail);
+                    alert('로그인 성공');
+                    navigateTo('/'); // 로그인 성공 후 대시보드로 이동
+                }else{
+                    console.log('사용자 정보가 없습니다.');
+                }
+            }
         } catch (error) {
             console.error('로그인 오류:', error.message);
             alert('로그인 실패: ' + error.message);

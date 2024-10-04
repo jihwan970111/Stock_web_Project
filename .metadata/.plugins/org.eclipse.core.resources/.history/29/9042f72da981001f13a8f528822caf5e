@@ -1,0 +1,35 @@
+package kr.ac.kopo.ctc.stock.web;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.ac.kopo.ctc.stock.domain.Kor_Gdp;
+import kr.ac.kopo.ctc.stock.domain.Kor_global_exchange_rate;
+import kr.ac.kopo.ctc.stock.repository.Kor_Gdp_Repository;
+import kr.ac.kopo.ctc.stock.repository.Kor_global_exchange_rate_Repository;
+
+@Controller
+public class MainController {
+    @Autowired
+    private Kor_Gdp_Repository kor_Gdp_Repository;
+    @Autowired
+    private Kor_global_exchange_rate_Repository kor_global_exchange_Repository;
+    
+    @GetMapping("/gdp")
+    public ResponseEntity<List<Kor_Gdp>> getGdpData() {
+        List<Kor_Gdp> kor_gdp = kor_Gdp_Repository.findAll();
+        List<Kor_global_exchange_rate> kor_global = kor_global_exchange_Repository.findAll();
+        // 데이터 출력하여 확인
+        System.out.println("Kor_Gdp 데이터:");
+        for (Kor_global_exchange_rate data : kor_global) {
+            System.out.println(data);
+        }
+        
+        return ResponseEntity.ok(kor_gdp);
+    }
+}

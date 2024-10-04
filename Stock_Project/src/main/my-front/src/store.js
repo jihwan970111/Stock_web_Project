@@ -2,7 +2,11 @@ import { create } from 'zustand'
 
 const useUsernameStore = create((set) => ({
   username: 'unknown',
-  updateUsername: (newName) => set({username: newName}),
+  email: 'unknown',
+  updateUsername: (newName, newEmail) => set({
+    username: newName,
+    email: newEmail,
+  }),
 }))
 
-export default useUsernameStore
+export default useUsernameStore;

@@ -3,12 +3,20 @@ import { db, firebase } from "../lib/firebase"; // Firebase 설정 경로
 import { useFirestoreQuery } from "../lib/hooks"; // Firestore 훅 경로 확인
 import { BiSend } from "react-icons/bi"; // BiSend 아이콘 임포트
 import Message from "./Message"; // Message 컴포넌트 임포트
+import useUsernameStore from '../store'; // zustand에서 사용자 정보 가져오기
 
 const Channel = ({ id = null }) => {
-  const messagesRef = db.collection(`messages-${id}`);
+  const messagesRef = db.collection('messages');
   const messages = useFirestoreQuery(
     messagesRef.orderBy("createdAt", "desc").limit(1000)
   );
+
+  const { username, email } = useUsernameStore(); // zustand에서 username과 email 가져오기
+
+  useEffect(() => {
+    console.log("Submitting message with username:", username); // 값 확인
+    console.log("Submitting message with email:", email);       // 값 확인
+  }, [username, email]);
 
   const [newMessage, setNewMessage] = useState("");
   const inputRef = useRef();
@@ -21,13 +29,19 @@ const Channel = ({ id = null }) => {
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     const trimmedMessage = newMessage.trim();
+    if (!email || !username ) {
+      console.error('로그인 정보가 없습니다.');
+      alert('로그인 후 다시 시도해 주세요.');
+      return;
+    }
+
     if (trimmedMessage) {
       await messagesRef.add({
         text: trimmedMessage,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        uid: "currentUser?.id", // 실제 로그인된 사용자 정보로 대체
-        displayName: "currentUser?.name", // 실제 사용자 정보로 대체
-        photoURL: "currentUser?.photoURL", // 실제 사용자 정보로 대체
+        uid: email, // 이메일을 uid로 저장
+        displayName: username, // 실제 사용자 이름 저장
+        photoURL: "https://w7.pngwing.com/pngs/741/68/png-transparent-user-computer-icons-user-miscellaneous-cdr-rectangle-thumbnail.png", // 실제 사용자 프로필 사진
         isRead: false,
       });
 
@@ -35,6 +49,7 @@ const Channel = ({ id = null }) => {
       bottomListRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+
 
   useEffect(() => {
     if (inputRef.current) {

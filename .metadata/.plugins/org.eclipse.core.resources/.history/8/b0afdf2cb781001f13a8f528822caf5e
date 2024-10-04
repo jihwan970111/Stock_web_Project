@@ -1,0 +1,20 @@
+package kr.ac.kopo.ctc.stock.domain;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
+import java.util.Date;
+@Entity
+@Getter
+@Setter
+public class Kor_Price {
+	@Id
+    @JsonProperty("종목코드")
+	private String 종목코드;
+	
+	@Column
+	@JsonProperty("날짜")
+	private Date 날짜;
+}
