@@ -13,10 +13,10 @@ export default function Head() {
     return (
         <div className={styles.head_container}>
             <h1>주식의 이야기</h1>
-            {username=="unknown" ? (
+            {username==="unknown" ? (
                 <div className={styles.button_container}>
                     <button onClick={() => navigateTo('/sign_in')}>회원가입</button>
-                    <button onClick={() => navigateTo('login')}>로그인</button>
+                    <button onClick={() => navigateTo('/login')}>로그인</button>
                 </div>
             )
             : (
