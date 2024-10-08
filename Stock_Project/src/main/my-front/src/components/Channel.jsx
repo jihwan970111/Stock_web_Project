@@ -22,13 +22,18 @@ const Channel = ({ id = null }) => {
 
   useEffect(() => {
     fetchMessages();  // 컴포넌트 마운트 시 메시지 조회
-  }, []);
 
+    const interval = setInterval(() => {
+        fetchMessages();  // 5초마다 메시지 갱신
+    }, 5000);
+
+    return () => clearInterval(interval);  // 컴포넌트가 언마운트되면 인터벌을 정리
+  }, []);
+  
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     const trimmedMessage = newMessage.trim();
     
-    // 이메일이 'unknown'이거나 빈 값일 경우 처리
     if (!email || email === 'unknown' || !username) {
       alert('로그인 후 다시 시도해 주세요.');
       return;
@@ -36,15 +41,18 @@ const Channel = ({ id = null }) => {
 
     if (trimmedMessage) {
       try {
-        await axios.post('http://localhost:8080/api/messages/send', {
+        const response = await axios.post('http://localhost:8080/api/messages/send', {
           text: trimmedMessage,
           uid: email,
           displayName: username,
           photoURL: "https://w7.pngwing.com/pngs/741/68/png-transparent-user-computer-icons-user-miscellaneous-cdr-rectangle-thumbnail.png"
         });
+        
+        const sentMessage = response.data;  // 서버에서 반환된 메시지 데이터
+        setMessages(prevMessages => [...prevMessages, sentMessage]);  // 기존 메시지에 새 메시지 추가
+        
         setNewMessage("");  // 메시지 입력창 초기화
-        fetchMessages();  // 메시지 다시 불러오기
-        bottomListRef.current.scrollIntoView({ behavior: "smooth" });
+        bottomListRef.current.scrollIntoView({ behavior: "smooth" });  // 스크롤 자동 이동
       } catch (error) {
         console.error("메시지 전송 오류: ", error);
       }
@@ -52,36 +60,34 @@ const Channel = ({ id = null }) => {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="overflow-auto h-full">
-        <div className="py-4 max-w-screen-lg mx-auto">
-          <ul>
-            {messages?.map((message) => (
-              <li key={message.id}>
-                <Message {...message} />
-              </li>
-            ))}
-          </ul>
-          <div ref={bottomListRef} className="mb-16" />
-        </div>
+    <div style={{ maxHeight: '400px', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flexGrow: 1, overflowY: 'auto' }}>
+        <ul>
+          {messages?.map((message) => (
+            <li key={message.id}>
+              <Message {...message} />
+            </li>
+          ))}
+        </ul>
+        <div ref={bottomListRef} />
       </div>
 
-      <div className="w-full z-20 pb-safe bottom-0 fixed md:max-w-xl p-4 bg-gray-50">
-        <form onSubmit={handleOnSubmit} className="flex">
+      <div style={{ borderTop: '1px solid #ccc', padding: '10px', backgroundColor: '#f9f9f9' }}>
+        <form onSubmit={handleOnSubmit} style={{ display: 'flex' }}>
           <input
             ref={inputRef}
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="메세지를 입력하세요"
-            className="border rounded-full px-4 h-10 flex-1 mr-1 ml-1"
+            style={{ flexGrow: 1, padding: '10px', borderRadius: '5px', border: '1px solid #ccc', marginRight: '10px' }}
           />
           <button
             type="submit"
             disabled={!newMessage}
-            className="rounded-full bg-red-400 h-10 w-10"
+            style={{ backgroundColor: '#ff4d4d', color: 'white', borderRadius: '5px', padding: '10px 15px' }}
           >
-            <BiSend className="text-white text-xl w-10" />
+            <BiSend />
           </button>
         </form>
       </div>
