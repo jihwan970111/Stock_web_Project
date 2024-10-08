@@ -26,4 +26,8 @@ public class Kor_global_exchange_rate {
 	@Column
 	@JsonProperty("퍼센트")
 	private double 퍼센트;
+	
+	@Column
+	@JsonProperty("이미지")
+	private String 이미지;
 }

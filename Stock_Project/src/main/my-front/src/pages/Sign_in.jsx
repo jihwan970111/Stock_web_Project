@@ -81,8 +81,19 @@ export default function Sign() {
         alert('회원가입에 성공했습니다');
         navigate('/', { state: pathname });
       } catch (error) {
-        console.error('회원가입 중 오류 발생:', error);
-        setErrors({ form: error.message });
+        if (error.code === 'auth/email-already-in-use') {
+          setErrors({ email: '이미 존재하는 이메일입니다. 다시 입력해주세요.' });
+          setForm({
+            email: '',
+            password: '',
+            confirmPassword: '',
+            name: '',
+            phone: '',
+            agree: false,
+          });
+        } else {
+          setErrors({ form: '회원가입 중 오류가 발생했습니다.' });
+        }
       }
     }
   };

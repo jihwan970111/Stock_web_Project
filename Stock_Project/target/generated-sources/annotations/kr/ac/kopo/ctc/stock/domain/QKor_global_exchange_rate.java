@@ -25,6 +25,8 @@ public class QKor_global_exchange_rate extends EntityPathBase<Kor_global_exchang
 
     public final NumberPath<Double> 변화금액 = createNumber("변화금액", Double.class);
 
+    public final StringPath 이미지 = createString("이미지");
+
     public final NumberPath<Double> 퍼센트 = createNumber("퍼센트", Double.class);
 
     public QKor_global_exchange_rate(String variable) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/layout';
 import axios from 'axios';
 import Channel from '../components/Channel'; // 채팅 컴포넌트 임포트
+import styles from './Main.module.css'; // CSS 파일 임포트
 
 function Main() {
     const [gdpStocks, setGdpStocks] = useState([]);
@@ -19,7 +20,7 @@ function Main() {
     const fetchStockList = () => {
         axios.get('http://localhost:8080/gdp')  // API 경로를 '/gdp'로 설정
             .then(response => {
-                console.log("GDP 데이터:", response.data);  // 응답 데이터 확인
+                console.log("환율 데이터:", response.data);  // 응답 데이터 확인
                 setGdpStocks(response.data);
             })
             .catch(error => console.error('Error fetching stocks: ', error));
@@ -69,103 +70,111 @@ function Main() {
 
     return (
         <Layout>
-            <h2>GDP 데이터</h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>나라</th>
-                        <th>금액</th>
-                        <th>변화금액</th>
-                        <th>퍼센트</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {Array.isArray(gdpStocks) && gdpStocks.length > 0 ? (
-                    gdpStocks.map(stock => (
-                        <tr key={stock.나라}>
-                            <td>{stock.나라}</td>
-                            <td>{stock.금액}</td>
-                            <td>{stock.변화금액}</td>
-                            <td>{stock.퍼센트}</td>
-                        </tr>
-                    ))
-                ) : (
-                    <tr><td colSpan="4">GDP 데이터가 없습니다</td></tr>
-                )}
-                </tbody>
-            </table>
-
-            <h2>주식 랭킹(가격 상승률) 50건</h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>순위</th>
-                        <th>종목코드</th>
-                        <th>종목명</th>
-                        <th>종가</th>
-                        <th>상승률</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {Array.isArray(priceIncreaseStocks) && priceIncreaseStocks.length > 0 ? (
-                    priceIncreaseStocks.map((stock, index) => (
-                        <React.Fragment key={stock[0]}>
-                            <tr onClick={() => handleStockClick(stock[0], stock[2])} style={{ cursor: 'pointer' }}>
-                                <td>{index + 1}</td> 
-                                <td>{stock[0]}</td>  
-                                <td>{stock[2]}</td>
-                                <td>{stock[4]}</td>  
-                                <td>{parseFloat(stock[5]).toFixed(2)}</td> 
+            <div className={styles.container}>
+                <div className={styles.leftContent}>
+                    <h2>환율</h2>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>나라</th>
+                                <th>금액</th>
+                                <th>변화금액</th>
+                                <th>퍼센트</th>
+                                <th>이미지</th>
                             </tr>
-
-                            {selectedStock === stock[0] && (
-                                <tr>
-                                    <td colSpan="5">
-                                        <div style={{ padding: '10px', backgroundColor: '#f0f0f0', border: '1px solid #ddd' }}>
-                                            <h3>{stock[2]} 상세 정보</h3>
-                                            <p>현재가: {stock[4]}</p>
-                                            <p>상승률: {parseFloat(stock[5]).toFixed(2)}%</p>
-                                            <p>거래량: {stock[1]}</p> 
-
-                                            <h4>네이버 뉴스</h4>
-                                            {Array.isArray(naverNews) && naverNews.length > 0 ? (
-                                                <ul>
-                                                    {naverNews.slice(0, 5).map((news, i) => (
-                                                        <li key={i}>
-                                                            <a href={news.link} target="_blank" rel="noopener noreferrer">{news.title}</a> ({news.time})
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <p>네이버 뉴스 데이터가 없습니다</p>
-                                            )}
-
-                                            <h4>구글 뉴스</h4>
-                                            {Array.isArray(googleNews) && googleNews.length > 0 ? (
-                                                <ul>
-                                                    {googleNews.slice(0, 5).map((news, i) => (
-                                                        <li key={i}>
-                                                            <a href={news.link} target="_blank" rel="noopener noreferrer">{news.title}</a> ({news.time})
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            ) : (
-                                                <p>구글 뉴스 데이터가 없습니다</p>
-                                            )}
-                                        </div>
-                                    </td>
+                        </thead>
+                        <tbody>
+                        {Array.isArray(gdpStocks) && gdpStocks.length > 0 ? (
+                            gdpStocks.map(stock => (
+                                <tr key={stock.나라}>
+                                    <td>{stock.나라}</td>
+                                    <td>{stock.금액}</td>
+                                    <td>{stock.변화금액}</td>
+                                    <td>{stock.퍼센트}</td>
+                                    <td><img src={stock.이미지} alt={stock.나라} width="132" height="75"></img></td>
                                 </tr>
-                            )}
-                        </React.Fragment>
-                    ))
-                ) : (
-                    <tr><td colSpan="4">가격 상승률 데이터가 없습니다</td></tr>
-                )}
-                </tbody>
-            </table>
+                            ))
+                        ) : (
+                            <tr><td colSpan="4">GDP 데이터가 없습니다</td></tr>
+                        )}
+                        </tbody>
+                    </table>
 
-            <h2>실시간 채팅</h2>
-            <Channel id="main-channel" />
+                    <h2>주식 랭킹(가격 상승률) 50건</h2>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>종목코드</th>
+                                <th>종목명</th>
+                                <th>종가</th>
+                                <th>상승률</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {Array.isArray(priceIncreaseStocks) && priceIncreaseStocks.length > 0 ? (
+                            priceIncreaseStocks.map((stock, index) => (
+                                <React.Fragment key={stock[0]}>
+                                    <tr onClick={() => handleStockClick(stock[0], stock[2])} style={{ cursor: 'pointer' }}>
+                                        <td>{index + 1}</td> 
+                                        <td>{stock[0]}</td>  
+                                        <td>{stock[2]}</td>
+                                        <td>{stock[4]}</td>  
+                                        <td>{parseFloat(stock[5]).toFixed(2)}</td> 
+                                    </tr>
+
+                                    {selectedStock === stock[0] && (
+                                        <tr>
+                                            <td colSpan="5">
+                                                <div style={{ padding: '10px', backgroundColor: '#f0f0f0', border: '1px solid #ddd' }}>
+                                                    <h3>{stock[2]} 상세 정보</h3>
+                                                    <p>현재가: {stock[4]}</p>
+                                                    <p>상승률: {parseFloat(stock[5]).toFixed(2)}%</p>
+                                                    <p>거래량: {stock[1]}</p> 
+
+                                                    <h4>네이버 뉴스</h4>
+                                                    {Array.isArray(naverNews) && naverNews.length > 0 ? (
+                                                        <ul>
+                                                            {naverNews.slice(0, 5).map((news, i) => (
+                                                                <li key={i}>
+                                                                    <a href={news.link} target="_blank" rel="noopener noreferrer">{news.title}</a> ({news.time})
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    ) : (
+                                                        <p>네이버 뉴스 데이터가 없습니다</p>
+                                                    )}
+
+                                                    <h4>구글 뉴스</h4>
+                                                    {Array.isArray(googleNews) && googleNews.length > 0 ? (
+                                                        <ul>
+                                                            {googleNews.slice(0, 5).map((news, i) => (
+                                                                <li key={i}>
+                                                                    <a href={news.link} target="_blank" rel="noopener noreferrer">{news.title}</a> ({news.time})
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    ) : (
+                                                        <p>구글 뉴스 데이터가 없습니다</p>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            ))
+                        ) : (
+                            <tr><td colSpan="4">가격 상승률 데이터가 없습니다</td></tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className={styles.rightChat}>
+                    <h2>실시간 채팅</h2>
+                    <Channel id="main-channel" />
+                </div>
+            </div>
         </Layout>
     );
 }
