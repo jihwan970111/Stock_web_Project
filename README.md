@@ -23,8 +23,9 @@
 #### 기술 스택
 <p align="left">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=git,github,eclipse,mysql,java,figma,react" />
+    <img src="https://skillicons.dev/icons?i=git,github,eclipse,mysql,java,figma" />
   </a>
+    <img src="https://skillicons.dev/icons?i=react" height="53" title="React">
     <img src="https://git-fork.com/images/logo.png" height="53" title="Fork">
     <img src="https://cdn.icon-icons.com/icons2/3913/PNG/512/miro_logo_icon_248450.png" height="53" title="Miro">
 </p>
