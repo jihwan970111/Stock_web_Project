@@ -54,6 +54,7 @@ public class MessageService {
             });
         } catch (InterruptedException | ExecutionException e) {
             System.err.println("메시지 목록 조회 실패: " + e.getMessage());
+            e.printStackTrace();  // 스택 트레이스 출력
         }
 
         return messages;

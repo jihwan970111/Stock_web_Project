@@ -43,7 +43,7 @@ public class MessageController {
         messageService.saveMessage(text, uid, displayName, photoURL);
         return ResponseEntity.ok("메시지 전송 성공");
     }
-
+    
     // 메시지 조회 API (선택 사항)
     @GetMapping
     public ResponseEntity<List<Message>> getMessages() {
