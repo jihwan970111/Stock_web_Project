@@ -1,5 +1,5 @@
 # JAVA_Swing_React_Project
-제작 기간 - (2024-09-30 ~ 2023-10-10)
+제작 기간 - (2024-09-30 ~ 2024-10-10)
 ------
 <a href="https://docs.google.com/presentation/d/1dZi5a6-3NI119BigQ-V2PwbRjbNRoRCqUqWPzljGrRY/edit?usp=sharing" title="PDF로 이동" rel="nofollow"><img src="https://github.com/jihwan970111/Stock_web_Project/blob/master/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%8C%E1%85%A6%E1%86%A8%E1%84%90%E1%85%B3%20%E1%84%8B%E1%85%B5%E1%84%86%E1%85%B5%E1%84%8C%E1%85%B5.png" alt="cover" style="max-width: 100%;"></a>
 ----
